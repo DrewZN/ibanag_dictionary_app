@@ -69,8 +69,8 @@ class _WordScreenState extends State<WordScreen> {
                   const Text(
                     'Example Sentence(s)',
                     style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontSize: 25.0
+                      decoration: TextDecoration.underline,
+                      fontSize: 25.0
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -79,34 +79,34 @@ class _WordScreenState extends State<WordScreen> {
                     height: 15.0,
                   ),
                   ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: widget.exampleSentences.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            Text(
-                                widget.exampleSentences.elementAt(index).ibanagSentence,
-                                style: const TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold
-                                ),
-                                textAlign: TextAlign.center
+                    shrinkWrap: true,
+                    itemCount: widget.exampleSentences.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Text(
+                            widget.exampleSentences.elementAt(index).ibanagSentence,
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold
                             ),
-                            // Padding
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Text(
-                                widget.exampleSentences.elementAt(index).englishSentence,
-                                textAlign: TextAlign.center
-                            ),
-                            // Padding
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                          ],
-                        );
-                      }
+                            textAlign: TextAlign.center
+                          ),
+                          // Padding
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            widget.exampleSentences.elementAt(index).englishSentence,
+                            textAlign: TextAlign.center
+                          ),
+                          // Padding
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                        ],
+                      );
+                    }
                   )
                 ],
               ),
