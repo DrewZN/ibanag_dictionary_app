@@ -38,14 +38,15 @@ class _ResultsScreenState extends State<ResultsScreen> {
               ),
               // English Word
               subtitle: Text(widget.searchResults.elementAt(index).englishWord),
-              // Navigate to word page on tap
+              // Navigate to word screen on tap
               onTap: () async {
                 DictionaryEntry currentEntry = widget.searchResults.elementAt(index);
                 // Get example sentences for current Ibanag word
-                Future<List<ExampleSentence>> exampleSentencesFuture = fetchExampleSentences(currentEntry);
-                List<ExampleSentence> exampleSentences = await exampleSentencesFuture;
+                List<ExampleSentence> exampleSentences = await fetchExampleSentences(currentEntry);
+                // Get synonym(s) (if any) for current Ibanag word
+                List<DictionaryEntry> synonyms = await fetchSynonyms(currentEntry);
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences))
+                    MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
                 );
               },
             );
@@ -55,7 +56,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
     );
   }
 
-  // Method to Fetch Example Sentences for Current Ibanag Word
+  // Method to Fetch Example Sentence(s) for Current Ibanag Word
   Future<List<ExampleSentence>> fetchExampleSentences(DictionaryEntry currentEntry) async {
     // Look for all example sentences
     final response = await http.get(Uri.parse('http://192.168.1.42:3000/ex_sentence?ibg_word=eq.${currentEntry.ibanagWord}'));
@@ -68,7 +69,26 @@ class _ResultsScreenState extends State<ResultsScreen> {
       }
       return resultsArr;
     } else {
-      return [];
+      throw Exception('Failed to get results');
+    }
+  }
+
+  // Method to Fetch Synonym(s) (If Any) for Current Ibanag Word (Based on English Word/Translation)
+  Future<List<DictionaryEntry>> fetchSynonyms(DictionaryEntry currentEntry) async {
+    // Look for all synonym(s) (if any)
+    final response = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?eng_word=eq.${currentEntry.englishWord}&ibg_word=neq.${currentEntry.ibanagWord}'));
+    if (response.statusCode == 200) {
+      List<dynamic> fetchedResults = jsonDecode(response.body);
+      // Convert to List of DictionaryEntry
+      List<DictionaryEntry> resultsArr = [];
+      for (int i = 0; i < fetchedResults.length; ++i) {
+        resultsArr.add(DictionaryEntry(ibanagWord: fetchedResults.elementAt(i)['ibg_word'], englishWord: fetchedResults.elementAt(i)['eng_word'], partOfSpeech: fetchedResults.elementAt(i)['part_of_speech']));
+      }
+      // Sort in alphabetical order by Ibanag word
+      resultsArr.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
+      return resultsArr;
+    } else {
+      throw Exception('Failed to get results');
     }
   }
 }

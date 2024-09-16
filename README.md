@@ -9,6 +9,6 @@ An English-Ibanag/Ibanag-English dictionary written in Flutter/Dart.
 ### Word Screen
 - [x] Ibanag Word, Part of Speech, English Translation
 - [x] Example Sentence(s)
-- [ ] Synonym(s)
+- [x] Synonym(s)
 
 Sources for these translations will be listed in a "Sources" screen.
