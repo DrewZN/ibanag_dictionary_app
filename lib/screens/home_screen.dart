@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Convert to List of DictionaryEntry
       List<DictionaryEntry> resultsArr = [];
       for (int i = 0; i < fetchedResults.length; ++i) {
-        resultsArr.add(DictionaryEntry(ibanagWord: fetchedResults.elementAt(i)['ibg_word'], englishWord: fetchedResults.elementAt(i)['eng_word']));
+        resultsArr.add(DictionaryEntry(ibanagWord: fetchedResults.elementAt(i)['ibg_word'], englishWord: fetchedResults.elementAt(i)['eng_word'], partOfSpeech: fetchedResults.elementAt(i)['part_of_speech']));
       }
       // Sort in alphabetical order by Ibanag word
       resultsArr.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
