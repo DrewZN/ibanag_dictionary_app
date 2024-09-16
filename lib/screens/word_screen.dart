@@ -84,6 +84,7 @@ class _WordScreenState extends State<WordScreen> {
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
+                          // Ibanag Sentence
                           Text(
                             widget.exampleSentences.elementAt(index).ibanagSentence,
                             style: const TextStyle(
@@ -96,6 +97,7 @@ class _WordScreenState extends State<WordScreen> {
                           const SizedBox(
                             height: 10.0,
                           ),
+                          // English Sentence
                           Text(
                             widget.exampleSentences.elementAt(index).englishSentence,
                             textAlign: TextAlign.center
