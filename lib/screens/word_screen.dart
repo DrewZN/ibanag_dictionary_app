@@ -53,50 +53,63 @@ class _WordScreenState extends State<WordScreen> {
             ),
             // Padding
             const SizedBox(
-              height: 100.0,
+              height: 40.0,
             ),
             // Example Sentence(s)
-            const Text(
-              'Example Sentences',
-              style: TextStyle(
-                fontSize: 40.0
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color:Colors.white)
               ),
-              textAlign: TextAlign.center,
-            ),
-            // Padding
-            const SizedBox(
-              height: 15.0,
-            ),
-            ListView.builder(
-              padding: const EdgeInsets.fromLTRB(25.0, 0, 25.0, 0),
-              shrinkWrap: true,
-              itemCount: widget.exampleSentences.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Text(
-                      widget.exampleSentences.elementAt(index).ibanagSentence,
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold
-                      ),
-                      textAlign: TextAlign.center
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'Example Sentence(s)',
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        fontSize: 25.0
                     ),
-                    // Padding
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      widget.exampleSentences.elementAt(index).englishSentence,
-                      textAlign: TextAlign.center
-                    ),
-                    // Padding
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                  ],
-                );
-              }
+                    textAlign: TextAlign.center,
+                  ),
+                  // Padding
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.exampleSentences.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            Text(
+                                widget.exampleSentences.elementAt(index).ibanagSentence,
+                                style: const TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold
+                                ),
+                                textAlign: TextAlign.center
+                            ),
+                            // Padding
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Text(
+                                widget.exampleSentences.elementAt(index).englishSentence,
+                                textAlign: TextAlign.center
+                            ),
+                            // Padding
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                          ],
+                        );
+                      }
+                  )
+                ],
+              ),
             )
           ],
         ),
