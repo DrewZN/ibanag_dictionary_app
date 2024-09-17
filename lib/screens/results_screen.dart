@@ -24,7 +24,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('Search Results for: ${widget.title}')),
       body: Center(
-        child: ListView.builder(
+        child: widget.searchResults.isNotEmpty ? ListView.builder(
           itemCount: widget.searchResults.length,
           itemBuilder: (context, index) {
             return ListTile(
@@ -51,7 +51,14 @@ class _ResultsScreenState extends State<ResultsScreen> {
               },
             );
           }
-        ),
+        ) : const Text(
+          'No Words Found',
+          style: TextStyle(
+            fontSize: 40.0,
+            fontWeight: FontWeight.bold
+          ),
+          textAlign: TextAlign.center,
+        )
       ),
     );
   }

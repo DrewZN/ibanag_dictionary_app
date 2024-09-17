@@ -161,7 +161,7 @@ class _WordScreenState extends State<WordScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            ListView.builder(
+            widget.synonyms.isNotEmpty ? ListView.builder(
               shrinkWrap: true,
               itemCount: widget.synonyms.length,
               itemBuilder: (context, index) {
@@ -194,6 +194,13 @@ class _WordScreenState extends State<WordScreen> {
                   },
                 );
               }
+            ) : const Text(
+              'No Synonyms Found',
+              style: TextStyle(
+                fontSize: 30.0,
+                fontWeight: FontWeight.bold
+              ),
+              textAlign: TextAlign.center,
             )
           ],
         ),
