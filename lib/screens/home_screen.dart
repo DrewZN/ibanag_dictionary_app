@@ -6,7 +6,10 @@ import 'package:fluttertoast/fluttertoast.dart';  // Used to display toast messa
 import 'package:http/http.dart' as http;  // Used to fetch dictionary data
 
 import 'package:ibanag_dictionary_app/classes/dict_entry.dart';
+import 'package:ibanag_dictionary_app/screens/favorite_words_screen.dart';
+
 import 'package:ibanag_dictionary_app/screens/results_screen.dart';
+import 'package:ibanag_dictionary_app/screens/word_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +26,36 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            // App Title
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.green,
+              ),
+              child: Text(
+                'Ibanag Dictionary',
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold
+                ),
+              )
+            ),
+            // Favorite Words Screen
+            ListTile(
+              title: const Text('Favorite Words'),
+              // Navigate to Favorite Words screen
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => FavoriteWordsScreen())
+                );
+              }
+            )
+          ],
+        ),
       ),
       body: Center(
         child: ListView(

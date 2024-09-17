@@ -29,7 +29,7 @@ class _WordScreenState extends State<WordScreen> {
   void initState() {
     super.initState();
     // Check if current word is favorited/unfavorited
-    fetchCurrentFavoriteWords().then((response) {
+    fetchFavoriteWords().then((response) {
       setState(() {
         favorited = false;
         for (int i = 0; i < response.length; ++i) {
@@ -245,8 +245,8 @@ class _WordScreenState extends State<WordScreen> {
   }
 
   // Method to Fetch Favorited/Unfavorited Status for Current Ibanag Word
-  Future<List<DictionaryEntry>> fetchCurrentFavoriteWords() async {
-    // Open database to fetch user's favorite Ibanag words
+  Future<List<DictionaryEntry>> fetchFavoriteWords() async {
+    // Open database
     WidgetsFlutterBinding.ensureInitialized();
     final favoriteIbanagWordsDB = openDatabase(
         join(await getDatabasesPath(), 'ibanag_dict_data.db'),
@@ -274,7 +274,7 @@ class _WordScreenState extends State<WordScreen> {
 
   // Method to Set Favorited/Unfavorited Status for Current Ibanag Word
   Future<void> setFavoriteStatus() async {
-    // Open database to fetch user's favorite Ibanag words
+    // Open database
     WidgetsFlutterBinding.ensureInitialized();
     final favoriteIbanagWordsDB = openDatabase(
         join(await getDatabasesPath(), 'ibanag_dict_data.db'),

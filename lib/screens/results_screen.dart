@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;  // Used to fetch dictionary data
 
 import 'package:ibanag_dictionary_app/classes/dict_entry.dart';
 import 'package:ibanag_dictionary_app/classes/ex_sentence.dart';
+
 import 'package:ibanag_dictionary_app/screens/word_screen.dart';
 
 class ResultsScreen extends StatefulWidget {
