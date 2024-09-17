@@ -37,8 +37,16 @@ class _ResultsScreenState extends State<ResultsScreen> {
                   fontWeight: FontWeight.bold
                 ),
               ),
-              // English Word
-              subtitle: Text(widget.searchResults.elementAt(index).englishWord),
+              // Part of Speech and English Word
+              subtitle: RichText(
+                text: TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(text: '\t\t\t${widget.searchResults.elementAt(index).partOfSpeech}', style: const TextStyle(fontStyle: FontStyle.italic)),
+                    const TextSpan(text: '\t-\t'),
+                    TextSpan(text: widget.searchResults.elementAt(index).englishWord)
+                  ]
+                ),
+              ),
               // Navigate to word screen on tap
               onTap: () async {
                 DictionaryEntry currentEntry = widget.searchResults.elementAt(index);

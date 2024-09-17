@@ -174,11 +174,14 @@ class _WordScreenState extends State<WordScreen> {
                       fontWeight: FontWeight.bold
                     ),
                   ),
-                  // English Word
-                  subtitle: Text(
-                    widget.synonyms.elementAt(index).englishWord,
-                    style: const TextStyle(
-                      fontSize: 16.0,
+                  // Part of Speech and English Word
+                  subtitle: RichText(
+                    text: TextSpan(
+                      children: <TextSpan>[
+                        TextSpan(text: '\t\t\t${widget.synonyms.elementAt(index).partOfSpeech}', style: const TextStyle(fontStyle: FontStyle.italic)),
+                        const TextSpan(text: '\t-\t'),
+                        TextSpan(text: widget.synonyms.elementAt(index).englishWord)
+                      ]
                     ),
                   ),
                   // Navigate to word screen on tap

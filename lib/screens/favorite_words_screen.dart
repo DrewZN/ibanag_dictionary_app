@@ -46,8 +46,16 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
                       fontWeight: FontWeight.bold
                   ),
                 ),
-                // English Word
-                subtitle: Text(favoriteWords.elementAt(index).englishWord),
+                // Part of Speech and English Word
+                subtitle: RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(text: '\t\t\t${favoriteWords.elementAt(index).partOfSpeech}', style: const TextStyle(fontStyle: FontStyle.italic)),
+                      const TextSpan(text: '\t-\t'),
+                      TextSpan(text: favoriteWords.elementAt(index).englishWord)
+                    ]
+                  ),
+                ),
                 // Delete Favorite Button
                 trailing: IconButton(
                   onPressed: () {
