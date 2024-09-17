@@ -1,10 +1,10 @@
 # Ibanag-Dictionary-App
 An English-Ibanag/Ibanag-English dictionary written in Flutter/Dart.
 
-## Features
+## (Tentative) Feature List
 ### Overall
 - [x] English/Ibanag Word Search
-- [ ] Favorite Word List
+- [x] Favorite Word List
 - [ ] Word of the Day
 ### Word Screen
 - [x] Ibanag Word, Part of Speech, English Translation
