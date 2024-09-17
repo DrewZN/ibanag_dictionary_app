@@ -153,6 +153,8 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
       } in favoriteIbanagWordMaps)
         DictionaryEntry(ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
     ];
+    // Sort favorite words alphabetically by Ibanag word
+    favoriteWords.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
     // Refresh screen
     setState(() {});
   }
