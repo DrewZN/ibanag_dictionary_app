@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:convert';  // Used to fetch dictionary data
 
 import 'package:flutter/material.dart';
 

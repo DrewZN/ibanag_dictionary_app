@@ -1,8 +1,11 @@
-import 'dart:convert';
+import 'dart:async';  // Used for SQLite
+import 'dart:convert';  // Used to fetch dictionary data
 
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;  // Used to fetch dictionary data
+import 'package:path/path.dart';  // Used for SQLite
+import 'package:sqflite/sqflite.dart';  // Used for SQLite
 
 import 'package:ibanag_dictionary_app/classes/dict_entry.dart';
 import 'package:ibanag_dictionary_app/classes/ex_sentence.dart';
@@ -20,10 +23,36 @@ class WordScreen extends StatefulWidget {
 
 class _WordScreenState extends State<WordScreen> {
 
+  late bool favorited = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if current word is favorited/unfavorited
+    fetchCurrentFavoriteWords().then((response) {
+      setState(() {
+        favorited = false;
+        for (int i = 0; i < response.length; ++i) {
+          if (response.elementAt(i).ibanagWord == widget.currentEntry.ibanagWord) {
+            favorited = true;
+          }
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          // Favorite/Unfavorite Button
+          IconButton(
+            icon: Icon(favorited ? Icons.favorite : Icons.favorite_border),
+            onPressed: setFavoriteStatus
+          ),
+        ],
+      ),
       body: Center(
         child: ListView(
           children: <Widget>[
@@ -206,5 +235,71 @@ class _WordScreenState extends State<WordScreen> {
     } else {
       throw Exception('Failed to get results');
     }
+  }
+
+  // Method to Fetch Favorited/Unfavorited Status for Current Ibanag Word
+  Future<List<DictionaryEntry>> fetchCurrentFavoriteWords() async {
+    // Open database to fetch user's favorite Ibanag words
+    WidgetsFlutterBinding.ensureInitialized();
+    final favoriteIbanagWordsDB = openDatabase(
+        join(await getDatabasesPath(), 'ibanag_dict_data.db'),
+        onCreate: (db, version) {
+          return db.execute(
+            'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
+          );
+        },
+        version: 1
+    );
+    final db = await favoriteIbanagWordsDB;
+    final List<Map<String, Object?>> favoriteIbanagWordMaps = await db.query('ibg_fav_word');
+    // Close DB
+    await db.close();
+    // Convert to List of DictionaryEntry
+    return [
+      for (final {
+            'ibg_word': ibanagWord as String,
+            'eng_word': englishWord as String,
+            'part_of_speech': partOfSpeech as String
+          } in favoriteIbanagWordMaps)
+        DictionaryEntry(ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
+    ];
+  }
+
+  // Method to Set Favorited/Unfavorited Status for Current Ibanag Word
+  Future<void> setFavoriteStatus() async {
+    // Open database to fetch user's favorite Ibanag words
+    WidgetsFlutterBinding.ensureInitialized();
+    final favoriteIbanagWordsDB = openDatabase(
+        join(await getDatabasesPath(), 'ibanag_dict_data.db'),
+        onCreate: (db, version) {
+          return db.execute(
+            'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
+          );
+        },
+        version: 1
+    );
+    final db = await favoriteIbanagWordsDB;
+    // Favorite or unfavorite word
+    if (favorited == true) {
+      // Unfavorite word
+      // In DB
+      await db.delete(
+          'ibg_fav_word',
+          where: 'ibg_word = ?',
+          whereArgs: [widget.currentEntry.ibanagWord]
+      );
+      // In Word Screen
+      favorited = !favorited;
+    } else {
+      // Favorite word
+      // In DB
+      await db.rawInsert('INSERT INTO ibg_fav_word (ibg_word, eng_word, part_of_speech) VALUES ("${widget.currentEntry.ibanagWord}", "${widget.currentEntry.englishWord}", "${widget.currentEntry.partOfSpeech}")');
+      // In Word Screen
+      favorited = !favorited;
+    }
+    // Close DB
+    await db.close();
+    // Refresh screen
+    setState(() {});
   }
 }
