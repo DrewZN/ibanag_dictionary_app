@@ -74,7 +74,7 @@ class _WordScreenState extends State<WordScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            // Spacing
+            // Padding
             const SizedBox(
               height: 15.0,
             ),
@@ -252,13 +252,13 @@ class _WordScreenState extends State<WordScreen> {
     // Open database
     WidgetsFlutterBinding.ensureInitialized();
     final favoriteIbanagWordsDB = openDatabase(
-        join(await getDatabasesPath(), 'ibanag_dict_data.db'),
-        onCreate: (db, version) {
-          return db.execute(
-            'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
-          );
-        },
-        version: 1
+      join(await getDatabasesPath(), 'ibanag_dict_data.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
+        );
+      },
+      version: 1
     );
     final db = await favoriteIbanagWordsDB;
     final List<Map<String, Object?>> favoriteIbanagWordMaps = await db.query('ibg_fav_word');
@@ -266,12 +266,14 @@ class _WordScreenState extends State<WordScreen> {
     await db.close();
     // Convert to List of DictionaryEntry
     return [
-      for (final {
-            'ibg_word': ibanagWord as String,
-            'eng_word': englishWord as String,
-            'part_of_speech': partOfSpeech as String
-          } in favoriteIbanagWordMaps)
-        DictionaryEntry(ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
+      for (
+        final {
+          'ibg_word': ibanagWord as String,
+          'eng_word': englishWord as String,
+          'part_of_speech': partOfSpeech as String
+        } in favoriteIbanagWordMaps
+      )
+      DictionaryEntry(ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
     ];
   }
 
@@ -294,9 +296,9 @@ class _WordScreenState extends State<WordScreen> {
       // Unfavorite word
       // In DB
       await db.delete(
-          'ibg_fav_word',
-          where: 'ibg_word = ?',
-          whereArgs: [widget.currentEntry.ibanagWord]
+        'ibg_fav_word',
+        where: 'ibg_word = ?',
+        whereArgs: [widget.currentEntry.ibanagWord]
       );
       // In Word Screen
       favorited = !favorited;

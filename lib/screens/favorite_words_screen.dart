@@ -42,8 +42,8 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
                 title: Text(
                   favoriteWords.elementAt(index).ibanagWord,
                   style: const TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.bold
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold
                   ),
                 ),
                 // Part of Speech and English Word
@@ -72,7 +72,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
                   // Get synonym(s) (if any) for current Ibanag word
                   List<DictionaryEntry> synonyms = await fetchSynonyms(currentEntry);
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
+                    MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
                   ).then((_) {
                     // Recheck user's favorite words
                     fetchFavoriteWords();
@@ -83,8 +83,8 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
         ) : const Text(
           'No Words Found',
           style: TextStyle(
-              fontSize: 40.0,
-              fontWeight: FontWeight.bold
+            fontSize: 40.0,
+            fontWeight: FontWeight.bold
           ),
           textAlign: TextAlign.center,
         ),
@@ -132,13 +132,13 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
   void fetchFavoriteWords() async {
     WidgetsFlutterBinding.ensureInitialized();
     final favoriteIbanagWordsDB = openDatabase(
-        join(await getDatabasesPath(), 'ibanag_dict_data.db'),
-        onCreate: (db, version) {
-          return db.execute(
-              'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
-          );
-        },
-        version: 1
+      join(await getDatabasesPath(), 'ibanag_dict_data.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
+        );
+      },
+      version: 1
     );
     final db = await favoriteIbanagWordsDB;
     final List<Map<String, Object?>> favoriteIbanagWordMaps = await db.query('ibg_fav_word');
@@ -169,9 +169,9 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
     final db = await favoriteIbanagWordsDB;
     // Favorite or unfavorite word
     await db.delete(
-        'ibg_fav_word',
-        where: 'ibg_word = ?',
-        whereArgs: [wordToUnfavorite.ibanagWord]
+      'ibg_fav_word',
+      where: 'ibg_word = ?',
+      whereArgs: [wordToUnfavorite.ibanagWord]
     );
     // From screen
     favoriteWords.removeWhere((item) => item.ibanagWord == wordToUnfavorite.ibanagWord);

@@ -55,7 +55,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 // Get synonym(s) (if any) for current Ibanag word
                 List<DictionaryEntry> synonyms = await fetchSynonyms(currentEntry);
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
+                  MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
                 );
               },
             );
