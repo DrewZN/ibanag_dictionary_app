@@ -11,6 +11,7 @@ import 'package:ibanag_dictionary_app/classes/ex_sentence.dart';
 
 import 'package:ibanag_dictionary_app/screens/favorite_words_screen.dart';
 import 'package:ibanag_dictionary_app/screens/results_screen.dart';
+import 'package:ibanag_dictionary_app/screens/sources_screen.dart';
 import 'package:ibanag_dictionary_app/screens/word_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -57,7 +58,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(builder: (context) => FavoriteWordsScreen())
                 );
               }
-            )
+            ),
+            // Sources Screen
+            ListTile(
+                title: const Text('Sources'),
+                // Navigate to Sources screen
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SourcesScreen())
+                  );
+                }
+            ),
           ],
         ),
       ),
