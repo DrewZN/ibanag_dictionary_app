@@ -19,75 +19,80 @@ class FavoriteWordsScreen extends StatefulWidget {
 }
 
 class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
-
-  late List<DictionaryEntry> favoriteWords = [];
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetch user's favorite words
-    fetchFavoriteWords();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Your Favorite Words')),
-      body: Center(
-        child: favoriteWords.isNotEmpty ? ListView.builder(
-            itemCount: favoriteWords.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                // Ibanag Word
-                title: Text(
-                  favoriteWords.elementAt(index).ibanagWord,
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.bold
-                  ),
+      body: FutureBuilder(
+        future: fetchFavoriteWords(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Case: Still Loading
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Case: Error Found
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            // Case: Successfully Loaded User's Favorite Words
+            var favoriteWords = snapshot.data;
+            return Center(
+              child: favoriteWords!.isNotEmpty ? ListView.builder(
+                itemCount: favoriteWords.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    // Ibanag Word
+                    title: Text(
+                      favoriteWords.elementAt(index).ibanagWord,
+                      style: const TextStyle(
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    // Part of Speech and English Word
+                    subtitle: RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(text: '\t\t\t${favoriteWords.elementAt(index).partOfSpeech}', style: const TextStyle(fontStyle: FontStyle.italic)),
+                          const TextSpan(text: '\t-\t'),
+                          TextSpan(text: favoriteWords.elementAt(index).englishWord)
+                        ]
+                      ),
+                    ),
+                    // Unfavorite Button
+                    trailing: IconButton(
+                      onPressed: () {
+                        // Delete word from user's favorite words list
+                        unfavoriteWord(favoriteWords, favoriteWords.elementAt(index));
+                      },
+                      icon: const Icon(Icons.delete_forever)
+                    ),
+                    // Navigate to word screen on tap
+                    onTap: () async {
+                      DictionaryEntry currentEntry = favoriteWords.elementAt(index);
+                      // Get example sentences for current Ibanag word
+                      List<ExampleSentence> exampleSentences = await fetchExampleSentences(currentEntry);
+                      // Get synonym(s) (if any) for current Ibanag word
+                      List<DictionaryEntry> synonyms = await fetchSynonyms(currentEntry);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
+                      ).then((_) {
+                        // Refresh screen
+                        setState(() {});
+                      });
+                    },
+                  );
+                }
+              ) : const Text(
+                'No Favorite Words',
+                style: TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold
                 ),
-                // Part of Speech and English Word
-                subtitle: RichText(
-                  text: TextSpan(
-                    children: <TextSpan>[
-                      TextSpan(text: '\t\t\t${favoriteWords.elementAt(index).partOfSpeech}', style: const TextStyle(fontStyle: FontStyle.italic)),
-                      const TextSpan(text: '\t-\t'),
-                      TextSpan(text: favoriteWords.elementAt(index).englishWord)
-                    ]
-                  ),
-                ),
-                // Delete Favorite Button
-                trailing: IconButton(
-                  onPressed: () {
-                    // Delete word from user's favorite words list
-                    unfavoriteWord(favoriteWords.elementAt(index));
-                  },
-                  icon: const Icon(Icons.delete_forever)
-                ),
-                // Navigate to word screen on tap
-                onTap: () async {
-                  DictionaryEntry currentEntry = favoriteWords.elementAt(index);
-                  // Get example sentences for current Ibanag word
-                  List<ExampleSentence> exampleSentences = await fetchExampleSentences(currentEntry);
-                  // Get synonym(s) (if any) for current Ibanag word
-                  List<DictionaryEntry> synonyms = await fetchSynonyms(currentEntry);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
-                  ).then((_) {
-                    // Recheck user's favorite words
-                    fetchFavoriteWords();
-                  });
-                },
-              );
-            }
-        ) : const Text(
-          'No Words Found',
-          style: TextStyle(
-            fontSize: 40.0,
-            fontWeight: FontWeight.bold
-          ),
-          textAlign: TextAlign.center,
-        ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+        }
       ),
     );
   }
@@ -129,7 +134,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
   }
 
   // Method to Fetch User's Favorite Ibanag Words
-  void fetchFavoriteWords() async {
+  Future<List<DictionaryEntry>> fetchFavoriteWords() async {
     WidgetsFlutterBinding.ensureInitialized();
     final favoriteIbanagWordsDB = openDatabase(
       join(await getDatabasesPath(), 'ibanag_dict_data.db'),
@@ -145,7 +150,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
     // Close DB
     await db.close();
     // Convert to List of DictionaryEntry and set 'favoriteWords'
-    favoriteWords = [
+    List<DictionaryEntry> favoriteWords = [
       for (final {
       'ibg_word': ibanagWord as String,
       'eng_word': englishWord as String,
@@ -155,12 +160,11 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> {
     ];
     // Sort favorite words alphabetically by Ibanag word
     favoriteWords.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
-    // Refresh screen
-    setState(() {});
+    return favoriteWords;
   }
 
   // Method to Unfavorite Current Ibanag Word
-  Future<void> unfavoriteWord(DictionaryEntry wordToUnfavorite) async {
+  Future<void> unfavoriteWord(List<DictionaryEntry> favoriteWords, DictionaryEntry wordToUnfavorite) async {
     // Open database
     WidgetsFlutterBinding.ensureInitialized();
     final favoriteIbanagWordsDB = openDatabase(

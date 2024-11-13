@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // Navigate to Favorite Words screen
               onTap: () {
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => FavoriteWordsScreen())
+                  MaterialPageRoute(builder: (context) => FavoriteWordsScreen())
                 );
               }
             )
