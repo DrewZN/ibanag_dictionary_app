@@ -1,11 +1,12 @@
 # Ibanag-Dictionary-App
 An English-Ibanag/Ibanag-English dictionary written in Flutter/Dart.
 
-## (Tentative) Feature List
+## Feature List
 ### Overall
 - [x] English/Ibanag Word Search
 - [x] Favorite Word List
 - [x] Random Word
+- [ ] Vocabulary Quizzes - Multiple-Choice, Short-Answer 
 ### Word Screen
 - [x] Ibanag Word, Part of Speech, English Translation
 - [x] Example Sentence(s)
