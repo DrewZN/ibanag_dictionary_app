@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
-import 'package:http/http.dart' as http;  // Used to fetch dictionary data
 import 'package:path/path.dart';  // Used for SQLite
 import 'package:sqflite/sqflite.dart';  // Used for SQLite
 
@@ -11,6 +8,7 @@ import 'package:ibanag_dictionary_app/shared_methods_mixin.dart';
 import 'package:ibanag_dictionary_app/classes/dict_entry.dart';
 import 'package:ibanag_dictionary_app/classes/ex_sentence.dart';
 
+import 'package:ibanag_dictionary_app/screens/quiz_setup_screen.dart';
 import 'package:ibanag_dictionary_app/screens/word_screen.dart';
 
 class FavoriteWordsScreen extends StatefulWidget {
@@ -39,12 +37,21 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> with SharedMe
               appBar: AppBar(
                 title: const Text('Your Favorite Words'),
                 actions: <Widget>[
-                  IconButton(
-                    onPressed: () {
-                      // Navigate to Quiz Word Selection Screen
-
-                    },
-                    icon: const Icon(Icons.quiz),
+                  PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        // Quiz Setup Button
+                        PopupMenuItem(
+                          child: const Text('Take a Quiz'),
+                          onTap: () {
+                            // Navigate to Quiz Setup Screen
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => const QuizSetupScreen())
+                            );
+                          },
+                        ),
+                      ];
+                    }
                   ),
                 ],
               ),
