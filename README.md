@@ -14,7 +14,7 @@ An English-Ibanag/Ibanag-English dictionary written in Flutter/Dart.
 
 ## Other Tools
 - PostgreSQL - Database
-- PostgREST - REST API for my Database
+- PostgREST - REST API for My Database
 
 Sources for translations used in the dictionary will be listed in a "Sources" screen.
 
