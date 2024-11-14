@@ -24,9 +24,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SharedMethods {
-  late String inputtedText = '';
+  late String _inputtedText = '';
 
-  late DictionaryEntry randomWord;
+  late DictionaryEntry _randomWord;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             // Case: Successfully Loaded Random Word
-            final randomWord = snapshot.data!;
+            final _randomWord = snapshot.data!;
             return Center(
               child: ListView(
                 padding: const EdgeInsets.all(50.0),
@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
                       hintText: 'Enter an English/Ibanag word'
                     ),
                     onChanged: (value) {
-                      inputtedText = value;
+                      _inputtedText = value;
                     },
                     onSubmitted: (value) {
                       // Look up inputted term
@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
                           // Ibanag Word
                           title: Center(
                             child: Text(
-                              randomWord.ibanagWord,
+                              _randomWord.ibanagWord,
                               style: const TextStyle(
                                 fontSize: 25.0,
                                 fontWeight: FontWeight.bold
@@ -185,16 +185,16 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
                             child: RichText(
                               text: TextSpan(
                                 children: <TextSpan>[
-                                  TextSpan(text: randomWord.partOfSpeech, style: const TextStyle(fontStyle: FontStyle.italic)),
+                                  TextSpan(text: _randomWord.partOfSpeech, style: const TextStyle(fontStyle: FontStyle.italic)),
                                   const TextSpan(text: '\t-\t'),
-                                  TextSpan(text: randomWord.englishWord)
+                                  TextSpan(text: _randomWord.englishWord)
                                 ]
                               ),
                             ),
                           ),
                           // Navigate to word screen on tap
                           onTap: () async {
-                            DictionaryEntry currentEntry = randomWord;
+                            DictionaryEntry currentEntry = _randomWord;
                             // Get example sentences for current Ibanag word
                             List<ExampleSentence> exampleSentences = await fetchExampleSentences(currentEntry);
                             // Get synonym(s) (if any) for current Ibanag word
@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
   // Method to Look Up Term
   void lookUpTerm() async {
     // Check for empty input
-    String inputToCheck = inputtedText;
+    String inputToCheck = _inputtedText;
     if (inputToCheck.replaceAll(' ','').isEmpty) {
       // Display error message
       Fluttertoast.showToast(
@@ -238,14 +238,14 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
     List<DictionaryEntry> searchResults = await resultsFuture;
     // Send user to results screen with all the terms returned by the query
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => ResultsScreen(title: inputtedText, searchResults: searchResults))
+      MaterialPageRoute(builder: (context) => ResultsScreen(title: _inputtedText, searchResults: searchResults))
     );
   }
 
   // Method to Fetch Search Results
   Future<List<DictionaryEntry>> fetchResults() async {
     // Get English/Ibanag terms matching what the user entered in
-    final response = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?or=(ibg_word.ilike.*$inputtedText*,eng_word.ilike.*$inputtedText*)&order=ibg_word'));
+    final response = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?or=(ibg_word.ilike.*$_inputtedText*,eng_word.ilike.*$_inputtedText*)&order=ibg_word'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       // Convert to List of DictionaryEntry

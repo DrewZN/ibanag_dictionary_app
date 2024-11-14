@@ -23,18 +23,18 @@ class WordScreen extends StatefulWidget {
 
 class _WordScreenState extends State<WordScreen> {
 
-  late bool favorited = false;
+  late bool _favorited = false;
 
   @override
   void initState() {
     super.initState();
-    // Check if current word is favorited/unfavorited
+    // Check if current word is _favorited/unfavorited
     fetchFavoriteWords().then((response) {
       setState(() {
-        favorited = false;
+        _favorited = false;
         for (int i = 0; i < response.length; ++i) {
           if (response.elementAt(i).ibanagWord == widget.currentEntry.ibanagWord) {
-            favorited = true;
+            _favorited = true;
           }
         }
       });
@@ -48,7 +48,7 @@ class _WordScreenState extends State<WordScreen> {
         actions: [
           // Favorite/Unfavorite Button
           IconButton(
-            icon: Icon(favorited ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(_favorited ? Icons.favorite : Icons.favorite_border),
             onPressed: setFavoriteStatus
           ),
         ],
@@ -247,7 +247,7 @@ class _WordScreenState extends State<WordScreen> {
     }
   }
 
-  // Method to Fetch Favorited/Unfavorited Status for Current Ibanag Word
+  // Method to Fetch _favorited/Unfavorited Status for Current Ibanag Word
   Future<List<DictionaryEntry>> fetchFavoriteWords() async {
     // Open database
     WidgetsFlutterBinding.ensureInitialized();
@@ -277,7 +277,7 @@ class _WordScreenState extends State<WordScreen> {
     ];
   }
 
-  // Method to Set Favorited/Unfavorited Status for Current Ibanag Word
+  // Method to Set _favorited/Unfavorited Status for Current Ibanag Word
   Future<void> setFavoriteStatus() async {
     // Open database
     WidgetsFlutterBinding.ensureInitialized();
@@ -292,7 +292,7 @@ class _WordScreenState extends State<WordScreen> {
     );
     final db = await favoriteIbanagWordsDB;
     // Favorite or unfavorite word
-    if (favorited == true) {
+    if (_favorited == true) {
       // Unfavorite word
       // In DB
       await db.delete(
@@ -301,13 +301,13 @@ class _WordScreenState extends State<WordScreen> {
         whereArgs: [widget.currentEntry.ibanagWord]
       );
       // In Word Screen
-      favorited = !favorited;
+      _favorited = !_favorited;
     } else {
       // Favorite word
       // In DB
       await db.rawInsert('INSERT INTO ibg_fav_word (ibg_word, eng_word, part_of_speech) VALUES ("${widget.currentEntry.ibanagWord}", "${widget.currentEntry.englishWord}", "${widget.currentEntry.partOfSpeech}")');
       // In Word Screen
-      favorited = !favorited;
+      _favorited = !_favorited;
     }
     // Close DB
     await db.close();

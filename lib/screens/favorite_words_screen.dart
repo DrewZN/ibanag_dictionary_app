@@ -49,7 +49,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> with SharedMe
                             if (favoriteWords!.isEmpty) {
                               // Display error message
                               Fluttertoast.showToast(
-                                msg: 'You have not favorited any words to quiz!',
+                                msg: 'You have not favorited any words!',
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 3,
@@ -61,7 +61,7 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> with SharedMe
                             }
                             // Navigate to Quiz Setup Screen
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => const QuizSetupScreen())
+                              MaterialPageRoute(builder: (context) => QuizSetupScreen(favoriteWords))
                             );
                           },
                         ),
