@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:path/path.dart';  // Used for SQLite
 import 'package:sqflite/sqflite.dart';  // Used for SQLite
@@ -44,6 +45,20 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> with SharedMe
                         PopupMenuItem(
                           child: const Text('Take a Quiz'),
                           onTap: () {
+                            // First check if user has any words favorited
+                            if (favoriteWords!.isEmpty) {
+                              // Display error message
+                              Fluttertoast.showToast(
+                                msg: 'You have not favorited any words to quiz!',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 3,
+                                backgroundColor: Colors.black,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                              );
+                              return;
+                            }
                             // Navigate to Quiz Setup Screen
                             Navigator.of(context).push(
                               MaterialPageRoute(builder: (context) => const QuizSetupScreen())
@@ -115,36 +130,6 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> with SharedMe
           }
         }
     );
-  }
-
-  // Method to Fetch User's Favorite Ibanag Words
-  Future<List<DictionaryEntry>> fetchFavoriteWords() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    final favoriteIbanagWordsDB = openDatabase(
-      join(await getDatabasesPath(), 'ibanag_dict_data.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
-        );
-      },
-      version: 1
-    );
-    final db = await favoriteIbanagWordsDB;
-    final List<Map<String, Object?>> favoriteIbanagWordMaps = await db.query('ibg_fav_word');
-    // Close DB
-    await db.close();
-    // Convert to List of DictionaryEntry and set 'favoriteWords'
-    List<DictionaryEntry> favoriteWords = [
-      for (final {
-      'ibg_word': ibanagWord as String,
-      'eng_word': englishWord as String,
-      'part_of_speech': partOfSpeech as String
-      } in favoriteIbanagWordMaps)
-        DictionaryEntry(ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
-    ];
-    // Sort favorite words alphabetically by Ibanag word
-    favoriteWords.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
-    return favoriteWords;
   }
 
   // Method to Unfavorite Current Ibanag Word

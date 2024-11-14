@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;  // Used to fetch dictionary data
 
 import 'package:ibanag_dictionary_app/classes/dict_entry.dart';
 import 'package:ibanag_dictionary_app/classes/ex_sentence.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 mixin SharedMethods {
   // Method to Fetch Example Sentence(s) for Current Ibanag Word
@@ -40,5 +43,35 @@ mixin SharedMethods {
     } else {
       throw Exception('Failed to get results');
     }
+  }
+
+  // Method to Fetch User's Favorite Ibanag Words
+  Future<List<DictionaryEntry>> fetchFavoriteWords() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final favoriteIbanagWordsDB = openDatabase(
+      join(await getDatabasesPath(), 'ibanag_dict_data.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
+        );
+      },
+      version: 1
+    );
+    final db = await favoriteIbanagWordsDB;
+    final List<Map<String, Object?>> favoriteIbanagWordMaps = await db.query('ibg_fav_word');
+    // Close DB
+    await db.close();
+    // Convert to List of DictionaryEntry and set 'favoriteWords'
+    List<DictionaryEntry> favoriteWords = [
+      for (final {
+      'ibg_word': ibanagWord as String,
+      'eng_word': englishWord as String,
+      'part_of_speech': partOfSpeech as String
+      } in favoriteIbanagWordMaps)
+        DictionaryEntry(ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
+    ];
+    // Sort favorite words alphabetically by Ibanag word
+    favoriteWords.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
+    return favoriteWords;
   }
 }
