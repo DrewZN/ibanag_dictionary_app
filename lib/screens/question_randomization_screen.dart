@@ -107,14 +107,14 @@ class _QuestionRandomizationScreenState extends State<QuestionRandomizationScree
                     // Randomly Select Words
                     List<DictionaryEntry> randomlySelectedWords = [];
                     for (var i = 0; i < numberOfQuestions; ++i) {
-                      // Randomly select number from 0 (inclusive) to '_numberOfQuestions' (exclusive)
-                      var randomNumber = Random().nextInt(numberOfQuestions);
-                      DictionaryEntry randomlySelectedWord = widget._favoriteWords.elementAt(randomNumber);
+                      // Randomly select index from 0 (inclusive) to 'widget._favoriteWords.length' (exclusive)
+                      var randomIndex = Random().nextInt(widget._favoriteWords.length);
+                      DictionaryEntry randomlySelectedWord = widget._favoriteWords.elementAt(randomIndex);
                       // Only add randomly-selected word is not in the list of randomly-selected words
                       while (randomlySelectedWords.contains(randomlySelectedWord)) {
                         // Continuously select words until a unique one (relative to 'randomlySelectedWords') is found
-                        randomNumber = Random().nextInt(numberOfQuestions);
-                        randomlySelectedWord = widget._favoriteWords.elementAt(randomNumber);
+                        randomIndex = Random().nextInt(widget._favoriteWords.length);
+                        randomlySelectedWord = widget._favoriteWords.elementAt(randomIndex);
                       }
                       // Add word to 'randomlySelectedWords'
                       randomlySelectedWords.add(randomlySelectedWord);
