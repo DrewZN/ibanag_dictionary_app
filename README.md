@@ -12,7 +12,7 @@ An English-Ibanag/Ibanag-English dictionary written in Flutter/Dart.
 - [x] Example Sentence(s)
 - [x] Synonym(s)
 
-# Other Tools
+## Other Tools
 - PostgreSQL - Database
 - PostgREST - REST API for my Database
 
