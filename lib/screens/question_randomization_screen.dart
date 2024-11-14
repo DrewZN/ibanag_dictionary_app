@@ -121,7 +121,7 @@ class _QuestionRandomizationScreenState extends State<QuestionRandomizationScree
                     }
                     // Navigate to actual Quiz Screen
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => QuizScreen(randomlySelectedWords))
+                      MaterialPageRoute(builder: (context) => QuizScreen(randomlySelectedWords, widget._favoriteWords))
                     );
                   },
                   child: const Text(

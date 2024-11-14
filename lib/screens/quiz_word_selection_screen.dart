@@ -111,7 +111,7 @@ class _QuizWordSelectionScreenState extends State<QuizWordSelectionScreen> with 
           _selectedWords.shuffle();
           // Navigate to actual Quiz Screen
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => QuizScreen(_selectedWords))
+              MaterialPageRoute(builder: (context) => QuizScreen(_selectedWords, widget._favoriteWords))
           );
         },
         child: const Icon(Icons.play_arrow),
