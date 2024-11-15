@@ -30,221 +30,238 @@ class _QuizScreenState extends State<QuizScreen> with SharedMethods {
   int _numberCorrect = 0;
   int _questionBankIndex = 0;
 
-  late List<QuizQuestion> _questionBank;
   late List<DictionaryEntry> _incorrectlyAnsweredQuestions;
 
   @override
   void initState() {
     super.initState();
     _incorrectlyAnsweredQuestions = [];
-    // Populate '_questionBank'
-    _questionBank = populateQuestionBank();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(),
-        body: Center(
-          child: (_questionBankIndex <= (_questionBank.length - 1)) ? Column(
-            children: <Widget>[
-              // Display Current Word
-              Text(
-                'Question #${_questionBankIndex + 1}',
-                style: const TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-              Text(
-                'What does \'${_questionBank.elementAt(_questionBankIndex).currentIbanagWord!.ibanagWord}\' mean?',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-              // Padding
-              const SizedBox(
-                height: 30.0,
-              ),
-              // Display Four Answers
-              // Answer #1
-              ListTile(
-                title: Text(_questionBank.elementAt(_questionBankIndex).answers!.elementAt(0).englishWord),
-                onTap: () {
-                  // Check if correct
-                  if (_questionBank.elementAt(_questionBankIndex).answers!.elementAt(0).englishWord == _questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
-                    _numberCorrect++;
-                  } else {
-                    _incorrectlyAnsweredQuestions.add(_questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
-                  }
-                  // Go to next question
-                  setState(() {
-                    _questionBankIndex++;
-                  });
-                },
-              ),
-              // Answer #2
-              ListTile(
-                title: Text(_questionBank.elementAt(_questionBankIndex).answers!.elementAt(1).englishWord),
-                onTap: () {
-                  // Check if correct
-                  if (_questionBank.elementAt(_questionBankIndex).answers!.elementAt(1).englishWord == _questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
-                    _numberCorrect++;
-                  } else {
-                    _incorrectlyAnsweredQuestions.add(_questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
-                  }
-                  // Go to next question
-                  setState(() {
-                    _questionBankIndex++;
-                  });
-                },
-              ),
-              // Answer #3
-              ListTile(
-                title: Text(_questionBank.elementAt(_questionBankIndex).answers!.elementAt(2).englishWord),
-                onTap: () {
-                  // Check if correct
-                  if (_questionBank.elementAt(_questionBankIndex).answers!.elementAt(2).englishWord == _questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
-                    _numberCorrect++;
-                  } else {
-                    _incorrectlyAnsweredQuestions.add(_questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
-                  }
-                  // Go to next question
-                  setState(() {
-                    _questionBankIndex++;
-                  });
-                },
-              ),
-              // Answer #4
-              ListTile(
-                title: Text(_questionBank.elementAt(_questionBankIndex).answers!.elementAt(3).englishWord),
-                onTap: () {
-                  // Check if correct
-                  if (_questionBank.elementAt(_questionBankIndex).answers!.elementAt(3).englishWord == _questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
-                    _numberCorrect++;
-                  } else {
-                    _incorrectlyAnsweredQuestions.add(_questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
-                  }
-                  // Go to next question
-                  setState(() {
-                    _questionBankIndex++;
-                  });
-                },
-              ),
-            ],
-          ) : Center(
-            child: ListView(
-              children: <Widget>[
-                // 'Your Score'
-                const Text(
-                  'Your Score',
-                  style: TextStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold
+    return FutureBuilder<List<QuizQuestion>>(
+      future: populateQuestionBank(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Case: Still Loading
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          // Case: Error Found
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          // Case: Successfully Populated Question Bank for Quiz
+          List<QuizQuestion> questionBank = snapshot.data!;
+          return Scaffold(
+            appBar: AppBar(),
+            body: Center(
+              child: (_questionBankIndex <= (questionBank.length - 1)) ? Column(
+                children: <Widget>[
+                  // Display Current Word
+                  Text(
+                    'Question #${_questionBankIndex + 1}',
+                    style: const TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                // Padding
-                const SizedBox(
-                  height: 30.0,
-                ),
-                Text(
-                  '$_numberCorrect / ${_questionBank.length} Correct!',
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold
+                  Text(
+                    'What does \'${questionBank.elementAt(_questionBankIndex).currentIbanagWord!.ibanagWord}\' mean?',
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                // Padding
-                const SizedBox(
-                  height: 30.0,
-                ),
-                // 'Words You Got Wrong'
-                const Text(
-                  'Words You Got Wrong',
-                  style: TextStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold
+                  // Padding
+                  const SizedBox(
+                    height: 30.0,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                _incorrectlyAnsweredQuestions.isNotEmpty ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _incorrectlyAnsweredQuestions.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        // Ibanag Word
-                        title: Text(
-                          _incorrectlyAnsweredQuestions.elementAt(index).ibanagWord,
-                          style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                        // Part of Speech and English Word
-                        subtitle: RichText(
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(text: '\t\t\t${_incorrectlyAnsweredQuestions.elementAt(index).partOfSpeech}', style: const TextStyle(fontStyle: FontStyle.italic)),
-                              const TextSpan(text: '\t-\t'),
-                              TextSpan(text: _incorrectlyAnsweredQuestions.elementAt(index).englishWord)
-                            ]
-                          ),
-                        ),
-                        // Navigate to word screen on tap
-                        onTap: () async {
-                          DictionaryEntry currentEntry = _incorrectlyAnsweredQuestions.elementAt(index);
-                          // Get example sentences for current Ibanag word
-                          List<ExampleSentence> exampleSentences = await fetchExampleSentences(currentEntry);
-                          // Get synonym(s) (if any) for current Ibanag word
-                          List<DictionaryEntry> synonyms = await fetchSynonyms(currentEntry);
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
-                          );
-                        },
-                      );
-                    }
-                ) : ListView(
-                  shrinkWrap: true,
-                  children: const <Widget>[
+                  // Display Four Answers
+                  // Answer #1
+                  ListTile(
+                    title: Text(questionBank.elementAt(_questionBankIndex).answers!.elementAt(0).englishWord),
+                    onTap: () {
+                      // Check if correct
+                      if (questionBank.elementAt(_questionBankIndex).answers!.elementAt(0).englishWord == questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
+                        _numberCorrect++;
+                      } else {
+                        _incorrectlyAnsweredQuestions.add(questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
+                      }
+                      // Go to next question
+                      setState(() {
+                        _questionBankIndex++;
+                      });
+                    },
+                  ),
+                  // Answer #2
+                  ListTile(
+                    title: Text(questionBank.elementAt(_questionBankIndex).answers!.elementAt(1).englishWord),
+                    onTap: () {
+                      // Check if correct
+                      if (questionBank.elementAt(_questionBankIndex).answers!.elementAt(1).englishWord == questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
+                        _numberCorrect++;
+                      } else {
+                        _incorrectlyAnsweredQuestions.add(questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
+                      }
+                      // Go to next question
+                      setState(() {
+                        _questionBankIndex++;
+                      });
+                    },
+                  ),
+                  // Answer #3
+                  ListTile(
+                    title: Text(questionBank.elementAt(_questionBankIndex).answers!.elementAt(2).englishWord),
+                    onTap: () {
+                      // Check if correct
+                      if (questionBank.elementAt(_questionBankIndex).answers!.elementAt(2).englishWord == questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
+                        _numberCorrect++;
+                      } else {
+                        _incorrectlyAnsweredQuestions.add(questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
+                      }
+                      // Go to next question
+                      setState(() {
+                        _questionBankIndex++;
+                      });
+                    },
+                  ),
+                  // Answer #4
+                  ListTile(
+                    title: Text(questionBank.elementAt(_questionBankIndex).answers!.elementAt(3).englishWord),
+                    onTap: () {
+                      // Check if correct
+                      if (questionBank.elementAt(_questionBankIndex).answers!.elementAt(3).englishWord == questionBank.elementAt(_questionBankIndex).currentIbanagWord!.englishWord) {
+                        _numberCorrect++;
+                      } else {
+                        _incorrectlyAnsweredQuestions.add(questionBank.elementAt(_questionBankIndex).currentIbanagWord!);
+                      }
+                      // Go to next question
+                      setState(() {
+                        _questionBankIndex++;
+                      });
+                    },
+                  ),
+                ],
+              ) : Center(
+                child: ListView(
+                  children: <Widget>[
+                    // 'Your Score'
+                    const Text(
+                      'Your Score',
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                     // Padding
-                    SizedBox(
+                    const SizedBox(
                       height: 30.0,
                     ),
                     Text(
-                      'None',
-                      style: TextStyle(
+                      '$_numberCorrect / ${questionBank.length} Correct',
+                      style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold
                       ),
                       textAlign: TextAlign.center,
+                    ),
+                    // Padding
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    // 'Words to Study'
+                    const Text(
+                      'Words to Study',
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    // Padding
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    // Display a ListTile for each word
+                    _incorrectlyAnsweredQuestions.isNotEmpty ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _incorrectlyAnsweredQuestions.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          // Ibanag Word
+                          title: Text(
+                            _incorrectlyAnsweredQuestions.elementAt(index).ibanagWord,
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          // Part of Speech and English Word
+                          subtitle: RichText(
+                            text: TextSpan(
+                              children: <TextSpan>[
+                                TextSpan(text: '\t\t\t${_incorrectlyAnsweredQuestions.elementAt(index).partOfSpeech}', style: const TextStyle(fontStyle: FontStyle.italic)),
+                                const TextSpan(text: '\t-\t'),
+                                TextSpan(text: _incorrectlyAnsweredQuestions.elementAt(index).englishWord)
+                              ]
+                            ),
+                          ),
+                          // Navigate to word screen on tap
+                          onTap: () async {
+                            DictionaryEntry currentEntry = _incorrectlyAnsweredQuestions.elementAt(index);
+                            // Get example sentences for current Ibanag word
+                            List<ExampleSentence> exampleSentences = await fetchExampleSentences(currentEntry);
+                            // Get synonym(s) (if any) for current Ibanag word
+                            List<DictionaryEntry> synonyms = await fetchSynonyms(currentEntry);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => WordScreen(currentEntry: currentEntry, exampleSentences: exampleSentences, synonyms: synonyms))
+                            );
+                          },
+                        );
+                      }
+                    ) : ListView(
+                      shrinkWrap: true,
+                      children: const <Widget>[
+                        // Padding
+                        SizedBox(
+                          height: 30.0,
+                        ),
+                        Text(
+                          'None',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold
+                          ),
+                          textAlign: TextAlign.center,
+                        )
+                      ],
                     )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
-          ),
-        )
+          );
+        }
+      },
     );
   }
 
-  // Method to Populate '_questionBank'
-  List<QuizQuestion> populateQuestionBank() {
-    List<QuizQuestion> ret = [];
+  // Method to Populate 'questionBank'
+  Future<List<QuizQuestion>> populateQuestionBank() async {
+    List<QuizQuestion> questionBank = [];
     for (int i = 0; i < widget._wordsForQuiz.length; ++i) {
       DictionaryEntry currentWord = widget._wordsForQuiz.elementAt(i);
       // Select answers for current word
-      List<DictionaryEntry> answersCurrentQuestion = selectAnswers(currentWord);
+      List<DictionaryEntry> answersCurrentQuestion = await selectAnswers(currentWord);
       // Add QuizQuestion to 'ret'
-      ret.add(QuizQuestion(currentWord, answersCurrentQuestion));
+      questionBank.add(QuizQuestion(currentWord, answersCurrentQuestion));
     }
-    return ret;
+    return questionBank;
   }
 
   // Method to Select Answers for Each Question Randomly
-  List<DictionaryEntry> selectAnswers(DictionaryEntry currentWord) {
+  Future<List<DictionaryEntry>> selectAnswers(DictionaryEntry currentWord) async {
     List<DictionaryEntry> selectedAnswers = [];
     // Add current word to 'selectedAnswers'
     selectedAnswers.add(currentWord);
@@ -274,10 +291,10 @@ class _QuizScreenState extends State<QuizScreen> with SharedMethods {
     } else {
       // From overall dictionary
       for (int i = 0; i < 3; ++i) {
-        DictionaryEntry randomlySelectedWord = getRandomWord(currentWord) as DictionaryEntry;
+        DictionaryEntry randomlySelectedWord = await getRandomWord(currentWord);
         // Prevent duplicate words in 'selectedAnswers'
         while (selectedAnswers.contains(randomlySelectedWord)) {
-          randomlySelectedWord = getRandomWord(currentWord) as DictionaryEntry;
+          randomlySelectedWord = await getRandomWord(currentWord);
         }
         // Add to 'selectedAnswers'
         selectedAnswers.add(randomlySelectedWord);
