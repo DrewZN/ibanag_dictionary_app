@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;  // Used to fetch dictionary data
+import 'package:path/path.dart';  // Used for SQLite
+import 'package:sqflite/sqflite.dart';  // Used for SQLite
 
 import 'package:ibanag_dictionary_app/classes/dict_entry.dart';
 import 'package:ibanag_dictionary_app/classes/ex_sentence.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 
 mixin SharedMethods {
   // Method to Fetch Example Sentence(s) for Current Ibanag Word

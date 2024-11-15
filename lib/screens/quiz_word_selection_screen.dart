@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:fluttertoast/fluttertoast.dart';  // Used to display toast messages to the user
+
 import 'package:ibanag_dictionary_app/shared_methods_mixin.dart';
 
 import 'package:ibanag_dictionary_app/classes/dict_entry.dart';
@@ -46,7 +48,7 @@ class _QuizWordSelectionScreenState extends State<QuizWordSelectionScreen> with 
           } else {
             // Case: Successfully Loaded in Favorite Words
             return Center(
-              child: widget._favoriteWords.isNotEmpty ? ListView.builder(
+              child: ListView.builder(
                 itemCount: widget._favoriteWords.length,
                 itemBuilder: (context, index) {
                   return CheckboxListTile(
@@ -92,13 +94,6 @@ class _QuizWordSelectionScreenState extends State<QuizWordSelectionScreen> with 
                     value: _favoriteWordsSelected.elementAt(index),
                   );
                 }
-              ) : const Text(
-                'No Favorite Words',
-                style: TextStyle(
-                  fontSize: 40.0,
-                  fontWeight: FontWeight.bold
-                ),
-                textAlign: TextAlign.center,
               ),
             );
           }
@@ -107,6 +102,20 @@ class _QuizWordSelectionScreenState extends State<QuizWordSelectionScreen> with 
       // Floating Action Button to Start Quiz with Selected Words
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // Check if user has selected any words
+          if (_selectedWords.isEmpty) {
+            // Display error message
+            Fluttertoast.showToast(
+              msg: 'Please select at least one (1) word',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 3,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0
+            );
+            return;
+          }
           // Randomize word order
           _selectedWords.shuffle();
           // Navigate to actual Quiz Screen

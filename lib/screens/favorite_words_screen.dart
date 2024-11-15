@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
+import 'package:fluttertoast/fluttertoast.dart';  // Used to display toast messages to the user
 import 'package:path/path.dart';  // Used for SQLite
 import 'package:sqflite/sqflite.dart';  // Used for SQLite
 

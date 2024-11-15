@@ -1,8 +1,4 @@
-import 'dart:convert';  // Used to fetch dictionary data
-
 import 'package:flutter/material.dart';
-
-import 'package:http/http.dart' as http;  // Used to fetch dictionary data
 
 import 'package:ibanag_dictionary_app/shared_methods_mixin.dart';
 
