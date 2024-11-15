@@ -31,10 +31,34 @@ class _QuizSetupScreenState extends State<QuizSetupScreen> {
             ),
             // Quiz Type Selection Screen
             const Text(
-              'Tap on \'Randomize Quiz\' or \'Pick Words\'',
+              'Tap on',
               style: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Text(
+              '\'Randomize Quiz\'',
+              style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Text(
+              'or',
+              style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Text(
+              '\'Pick Words\'',
+              style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold
               ),
               textAlign: TextAlign.center,
             ),

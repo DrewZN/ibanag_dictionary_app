@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;  // Used to fetch dictionary data
@@ -74,32 +73,5 @@ mixin SharedMethods {
     // Sort favorite words alphabetically by Ibanag word
     favoriteWords.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
     return favoriteWords;
-  }
-
-  // Method to Get Random Word
-  Future<DictionaryEntry> getRandomWord() async {
-    // Get Total Number of Entries in Dictionary
-    int totalNumberEntries = 0;
-    final response = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?select=count'));
-    if (response.statusCode == 200) {
-      List<dynamic> fetchedResults = jsonDecode(response.body);
-      totalNumberEntries = fetchedResults.elementAt(0)['count'];
-    } else {
-      throw Exception('Failed to get total number of entries in dictionary');
-    }
-    // Display 'null' if no words in the dictionary
-    if (totalNumberEntries == 0) {
-      return const DictionaryEntry(ibanagWord: 'null', englishWord: 'null', partOfSpeech: 'null');
-    }
-    // Select a random number from 1 to 'totalNumberEntries'
-    int randomNumber = Random().nextInt(totalNumberEntries) + 1;
-    // Get DictionaryEntry that corresponds with random number
-    final response2 = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?entry_id=eq.$randomNumber'));
-    if (response2.statusCode == 200) {
-      List<dynamic> fetchedResults = jsonDecode(response2.body);
-      return DictionaryEntry(ibanagWord: fetchedResults.elementAt(0)['ibg_word'], englishWord: fetchedResults.elementAt(0)['eng_word'], partOfSpeech: fetchedResults.elementAt(0)['part_of_speech']);
-    } else {
-      throw Exception('Failed to get results');
-    }
   }
 }
