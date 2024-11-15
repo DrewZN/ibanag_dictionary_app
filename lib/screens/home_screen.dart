@@ -276,10 +276,8 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
     if (totalNumberEntries == 0) {
       return const DictionaryEntry(ibanagWord: 'null', englishWord: 'null', partOfSpeech: 'null');
     }
-    // Select a random number from 1 to 'totalNumberEntries'
-    int randomNumber = Random().nextInt(totalNumberEntries) + 1;
     // Get DictionaryEntry that corresponds with random number
-    final response2 = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?entry_id=eq.$randomNumber'));
+    final response2 = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?order=random&limit=1'));
     if (response2.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response2.body);
       return DictionaryEntry(ibanagWord: fetchedResults.elementAt(0)['ibg_word'], englishWord: fetchedResults.elementAt(0)['eng_word'], partOfSpeech: fetchedResults.elementAt(0)['part_of_speech']);
