@@ -106,7 +106,7 @@ class _QuestionRandomizationScreenState extends State<QuestionRandomizationScree
                     }
                     // Randomly Select Words
                     List<DictionaryEntry> randomlySelectedWords = [];
-                    for (var i = 0; i < numberOfQuestions; ++i) {
+                    for (int i = 0; i < numberOfQuestions; ++i) {
                       // Randomly select index from 0 (inclusive) to 'widget._favoriteWords.length' (exclusive)
                       var randomIndex = Random().nextInt(widget._favoriteWords.length);
                       DictionaryEntry randomlySelectedWord = widget._favoriteWords.elementAt(randomIndex);
