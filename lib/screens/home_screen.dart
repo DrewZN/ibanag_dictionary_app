@@ -245,13 +245,13 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
   // Method to Fetch Search Results
   Future<List<DictionaryEntry>> fetchResults() async {
     // Get English/Ibanag terms matching what the user entered in
-    final response = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?or=(ibg_word.ilike.*$_inputtedText*,eng_word.ilike.*$_inputtedText*)&order=ibg_word'));
+    final response = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/dict_entry?or=(ibg_word.ilike.*$_inputtedText*,eng_word.ilike.*$_inputtedText*)&order=ibg_word'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       // Convert to List of DictionaryEntry
       List<DictionaryEntry> resultsArr = [];
       for (int i = 0; i < fetchedResults.length; ++i) {
-        resultsArr.add(DictionaryEntry(ibanagWord: fetchedResults.elementAt(i)['ibg_word'], englishWord: fetchedResults.elementAt(i)['eng_word'], partOfSpeech: fetchedResults.elementAt(i)['part_of_speech']));
+        resultsArr.add(DictionaryEntry(entryID: fetchedResults.elementAt(i)['entry_id'], ibanagWord: fetchedResults.elementAt(i)['ibg_word'], englishWord: fetchedResults.elementAt(i)['eng_word'], partOfSpeech: fetchedResults.elementAt(i)['part_of_speech']));
       }
       // Sort in alphabetical order by Ibanag word
       resultsArr.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
@@ -265,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
   Future<DictionaryEntry> getRandomWord() async {
     // Get Total Number of Entries in Dictionary
     int totalNumberEntries = 0;
-    final response = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?select=count'));
+    final response = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/dict_entry?select=count'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       totalNumberEntries = fetchedResults.elementAt(0)['count'];
@@ -274,13 +274,13 @@ class _HomeScreenState extends State<HomeScreen> with SharedMethods {
     }
     // Display 'null' if no words in the dictionary
     if (totalNumberEntries == 0) {
-      return const DictionaryEntry(ibanagWord: 'null', englishWord: 'null', partOfSpeech: 'null');
+      return const DictionaryEntry(entryID: -1, ibanagWord: 'null', englishWord: 'null', partOfSpeech: 'null');
     }
     // Get DictionaryEntry that corresponds with random number
-    final response2 = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?order=random&limit=1'));
+    final response2 = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/dict_entry?order=random&limit=1'));
     if (response2.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response2.body);
-      return DictionaryEntry(ibanagWord: fetchedResults.elementAt(0)['ibg_word'], englishWord: fetchedResults.elementAt(0)['eng_word'], partOfSpeech: fetchedResults.elementAt(0)['part_of_speech']);
+      return DictionaryEntry(entryID: fetchedResults.elementAt(0)['entry_id'], ibanagWord: fetchedResults.elementAt(0)['ibg_word'], englishWord: fetchedResults.elementAt(0)['eng_word'], partOfSpeech: fetchedResults.elementAt(0)['part_of_speech']);
     } else {
       throw Exception('Failed to get results');
     }

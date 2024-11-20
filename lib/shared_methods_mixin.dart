@@ -13,7 +13,7 @@ mixin SharedMethods {
   // Method to Fetch Example Sentence(s) for Current Ibanag Word
   Future<List<ExampleSentence>> fetchExampleSentences(DictionaryEntry currentEntry) async {
     // Look for all example sentences
-    final response = await http.get(Uri.parse('http://192.168.1.42:3000/ex_sentence?ibg_word=eq.${currentEntry.ibanagWord}'));
+    final response = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/ex_sentence?entry_id=eq.${currentEntry.entryID}'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       // Convert to List of ExampleSentence
@@ -30,13 +30,13 @@ mixin SharedMethods {
   // Method to Fetch Synonym(s) (If Any) for Current Ibanag Word (Based on English Word/Translation)
   Future<List<DictionaryEntry>> fetchSynonyms(DictionaryEntry currentEntry) async {
     // Look for all synonym(s) (if any)
-    final response = await http.get(Uri.parse('http://192.168.1.42:3000/dict_entry?eng_word=eq.${currentEntry.englishWord}&ibg_word=neq.${currentEntry.ibanagWord}'));
+    final response = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/dict_entry?eng_word=eq.${currentEntry.englishWord}&ibg_word=neq.${currentEntry.ibanagWord}'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       // Convert to List of DictionaryEntry
       List<DictionaryEntry> resultsArr = [];
       for (int i = 0; i < fetchedResults.length; ++i) {
-        resultsArr.add(DictionaryEntry(ibanagWord: fetchedResults.elementAt(i)['ibg_word'], englishWord: fetchedResults.elementAt(i)['eng_word'], partOfSpeech: fetchedResults.elementAt(i)['part_of_speech']));
+        resultsArr.add(DictionaryEntry(entryID: fetchedResults.elementAt(i)['entry_id'], ibanagWord: fetchedResults.elementAt(i)['ibg_word'], englishWord: fetchedResults.elementAt(i)['eng_word'], partOfSpeech: fetchedResults.elementAt(i)['part_of_speech']));
       }
       // Sort in alphabetical order by Ibanag word
       resultsArr.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));
@@ -53,7 +53,7 @@ mixin SharedMethods {
       join(await getDatabasesPath(), 'ibanag_dict_data.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE IF NOT EXISTS ibg_fav_word (ibg_word TEXT PRIMARY KEY, eng_word TEXT, part_of_speech TEXT)'
+          'CREATE TABLE IF NOT EXISTS ibg_fav_word (entry_id INTEGER PRIMARY KEY, ibg_word TEXT, eng_word TEXT, part_of_speech TEXT)'
         );
       },
       version: 1
@@ -65,11 +65,12 @@ mixin SharedMethods {
     // Convert to List of DictionaryEntry and set 'favoriteWords'
     List<DictionaryEntry> favoriteWords = [
       for (final {
+      'entry_id': entryID as int,
       'ibg_word': ibanagWord as String,
       'eng_word': englishWord as String,
       'part_of_speech': partOfSpeech as String
       } in favoriteIbanagWordMaps)
-        DictionaryEntry(ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
+        DictionaryEntry(entryID: entryID, ibanagWord: ibanagWord, englishWord: englishWord, partOfSpeech: partOfSpeech)
     ];
     // Sort favorite words alphabetically by Ibanag word
     favoriteWords.sort((a, b) => a.ibanagWord.compareTo(b.ibanagWord));

@@ -143,8 +143,8 @@ class _FavoriteWordsScreenState extends State<FavoriteWordsScreen> with SharedMe
     // Favorite or unfavorite word
     await db.delete(
       'ibg_fav_word',
-      where: 'ibg_word = ?',
-      whereArgs: [wordToUnfavorite.ibanagWord]
+      where: 'entry_id = ?',
+      whereArgs: [wordToUnfavorite.entryID]
     );
     // From screen
     favoriteWords.removeWhere((item) => item.ibanagWord == wordToUnfavorite.ibanagWord);
