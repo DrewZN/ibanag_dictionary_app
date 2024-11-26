@@ -13,7 +13,7 @@ mixin SharedMethods {
   // Method to Fetch Example Sentence(s) for Current Ibanag Word
   Future<List<ExampleSentence>> fetchExampleSentences(DictionaryEntry currentEntry) async {
     // Look for all example sentences
-    final response = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/ex_sentence?entry_id=eq.${currentEntry.entryID}'));
+    final response = await http.get(Uri.parse('http://50.18.55.165:3000/ex_sentence?entry_id=eq.${currentEntry.entryID}'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       // Convert to List of ExampleSentence
@@ -30,7 +30,7 @@ mixin SharedMethods {
   // Method to Fetch Synonym(s) (If Any) for Current Ibanag Word (Based on English Word/Translation)
   Future<List<DictionaryEntry>> fetchSynonyms(DictionaryEntry currentEntry) async {
     // Look for all synonym(s) (if any)
-    final response = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/dict_entry?eng_word=eq.${currentEntry.englishWord}&ibg_word=neq.${currentEntry.ibanagWord}'));
+    final response = await http.get(Uri.parse('http://50.18.55.165:3000/dict_entry?eng_word=eq.${currentEntry.englishWord}&ibg_word=neq.${currentEntry.ibanagWord}'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       // Convert to List of DictionaryEntry

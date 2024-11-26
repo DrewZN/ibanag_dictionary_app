@@ -310,7 +310,7 @@ class _QuizScreenState extends State<QuizScreen> with SharedMethods {
   Future<DictionaryEntry> getRandomWord(DictionaryEntry currentWord) async {
     // Get Total Number of Entries in Dictionary
     int totalNumberEntries = 0;
-    final response = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/dict_entry?select=count'));
+    final response = await http.get(Uri.parse('http://50.18.55.165:3000/dict_entry?select=count'));
     if (response.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response.body);
       totalNumberEntries = fetchedResults.elementAt(0)['count'];
@@ -322,7 +322,7 @@ class _QuizScreenState extends State<QuizScreen> with SharedMethods {
       return const DictionaryEntry(entryID: -1, ibanagWord: 'null', englishWord: 'null', partOfSpeech: 'null');
     }
     // Get DictionaryEntry that corresponds with random number and that is a word other than 'currentWord'
-    final response2 = await http.get(Uri.parse('http://ec2-13-57-18-99.us-west-1.compute.amazonaws.com:3000/dict_entry?order=random&ibg_word=not.eq.${currentWord.ibanagWord}&limit=1'));
+    final response2 = await http.get(Uri.parse('http://50.18.55.165:3000/dict_entry?order=random&ibg_word=not.eq.${currentWord.ibanagWord}&limit=1'));
     if (response2.statusCode == 200) {
       List<dynamic> fetchedResults = jsonDecode(response2.body);
       return DictionaryEntry(entryID: fetchedResults.elementAt(0)['entry_id'], ibanagWord: fetchedResults.elementAt(0)['ibg_word'], englishWord: fetchedResults.elementAt(0)['eng_word'], partOfSpeech: fetchedResults.elementAt(0)['part_of_speech']);
